@@ -14,8 +14,7 @@ import time
 
 class GetImages:
 
-    def __init__(self, chromedriver_path: str, opts=None): 
-        self.keyword=keyword
+    def __init__(self, chromedriver_path: str): 
         self.suffix=' fish'
         self.chromedriver_path='/Users/rrritalin/miniconda3/envs/zoopla/bin/chromedriver'
         # self.chromedriver_path=chromedriver_path
@@ -50,7 +49,7 @@ class GetImages:
         '''method to enter search term into image search box'''
         search_box=self.driver.find_element(by=By.XPATH, 
                                             value='/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
-        search_box.send_keys(self.keyword + self.suffix)
+        search_box.send_keys(keyword + self.suffix)
         search_box.send_keys(Keys.ENTER)
     
     def get_images(self, keyword: str, limit: int):
@@ -66,7 +65,7 @@ class GetImages:
                 time.sleep(0.1) 
 
                 img.screenshot( self.download_path + 
-                                self.keyword + '/img_' + str(image_number) + '.png')
+                                keyword + '/img_' + str(image_number) + '.png')
 
                 time.sleep(0.2)
             except:
@@ -88,7 +87,7 @@ if __name__ == "__main__":
     limit=200
     for fish in fish_types:
         fish_images=GetImages( chromedriver_path='/Users/rrritalin/miniconda3/envs/zoopla/bin/chromedriver')
-        keyword=fish_types(fish)
+        keyword=fish
         fish_images.get_search_page()
         fish_images.accept_cookies()
         fish_images.enter_search()
