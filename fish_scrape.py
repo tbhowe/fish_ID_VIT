@@ -76,6 +76,9 @@ class GetImages:
         '''method for closing the driver'''
         self.driver.close()
 
+    def scroll_to_bottom(self):
+        '''method to get more images by scrolling to bottom and clicking button'''
+        pass
                                         
 'pike, perch, zander, chub, barbel, pollack, plaice, mackerel, gurnard, scad'
 
