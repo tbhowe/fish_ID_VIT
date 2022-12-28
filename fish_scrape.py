@@ -54,8 +54,8 @@ class GetImages:
     
     def get_images(self, keyword: str, limit: int):
         '''method to get top n images from keyword, where n is the value passed in limit argument'''
-        if os.path.exists(self.download_path + self.keyword +'/' )==False:
-            os.makedirs(self.download_path + self.keyword +'/' )
+        if os.path.exists(self.download_path + keyword +'/' )==False:
+            os.makedirs(self.download_path + keyword +'/' )
         
         for image_number in range(1, limit+1):
             try:
