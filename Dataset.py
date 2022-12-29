@@ -1,6 +1,6 @@
 
 #%% Try again.
-from datasets import Dataset
+from datasets import load_dataset
 import random
 import os
 import pandas as pd
@@ -31,34 +31,33 @@ class FishDataset:
 
     def __init__(self):
         '''class constructor'''
-        self.fish_types = self.get_fish().values()
-        self.all_imgs=[]
-        for fish_type in self.fish_types:
-            self.all_imgs.extend(fish_type.images)
-        self.get_dataframe()
-        self.dataset=Dataset.from_pandas(self.get_dataframe())
-        
+        self.dataset=load_dataset("imagefolder", data_dir="images/")
+        # self.labels=self.dataset['train'].features['labels']
     
-    def get_fish(self):
-        "get the set of all fish image folders"
-        fish_map = {}
-        fish_fps = listdir_nohidden("images")
-        for fish_name in fish_fps:
-            fish_map[fish_name] = Fish(fish_name)
-        return fish_map
-    
-    def get_dataframe(self):
-        df=pd.DataFrame(self.all_imgs)
-        df.columns=['images']  
-        df['labels'] = df.images.str.extract(r"/(.*?)/")
-        return df
+    def show_examples(self,
+                        seed: int = 1234, 
+                        examples_per_class: int = 3, 
+                        size=(350, 350)):
+        ''' show an nx3 panel of example images from the dataset, where n is number of classes'''
 
-def listdir_nohidden(path):
-    "modified listdir function that doesn't return hidden files"
-    for f in os.listdir(path):
-        if not f.startswith('.'):
-            yield f
+        width, height = size
+        labels = self.dataset['train'].features['label'].names
+        grid = Image.new('RGB', size=(examples_per_class * width, len(labels) * height))
+        draw = ImageDraw.Draw(grid)
+        # font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf", 24)
 
+        for label_id, label in enumerate(labels):
+            # Filter the dataset by a single label, shuffle it, and grab a few samples
+            ds_slice = self.dataset['train'].filter(lambda ex: ex['label'] == label_id).shuffle(seed).select(range(examples_per_class))
+            # Plot this label's examples along a row
+            for i, example in enumerate(ds_slice):
+                image = example['image']
+                idx = examples_per_class * label_id + i
+                box = (idx % examples_per_class * width, idx // examples_per_class * height)
+                grid.paste(image.resize(size), box=box)
+                draw.text(box, label, (255, 255, 255))
+                
+        return(grid)
 
 
     
@@ -69,7 +68,8 @@ def listdir_nohidden(path):
 # example.__repr__()
 
 test_dataset=FishDataset()
-print(test_dataset.dataset)
-
+# labels = test_dataset.dataset['train'].features['label'].names
+# print(labels)
+test_dataset.show_examples()
 
 # %%
