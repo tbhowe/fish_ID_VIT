@@ -31,8 +31,12 @@ class FishDataset:
 
     def __init__(self):
         '''class constructor'''
-        self.dataset=load_dataset("imagefolder", data_dir="images/")
-        self.fish_species=self.dataset['train'].features['label'].names
+        self.dataset=load_dataset("imagefolder", data_dir="images/" )['train']
+        self.dataset=self.dataset.train_test_split(test_size=0.3)
+        self.splitter=self.dataset['test'].train_test_split(test_size=0.5)
+        self.dataset['test']=self.splitter['test']
+        self.dataset['validation']=self.splitter['train']
+        # self.fish_species=self.dataset['train'].features['label'].names
     
     def show_examples(self,
                         seed: int = 1234, 
@@ -64,6 +68,8 @@ class FishDataset:
         # include the labels
         inputs['labels'] = example_batch['labels']
         return inputs
+    
+    
 
 
     
@@ -74,8 +80,12 @@ class FishDataset:
 # example.__repr__()
 
 test_dataset=FishDataset()
+print(test_dataset.dataset)
 # labels = test_dataset.dataset['train'].features['label'].names
 # print(labels)
-test_dataset.show_examples()
+# test_dataset.show_examples()
+# model_name_or_path = 'google/vit-base-patch16-224-in21k'
+# feature_extractor = ViTFeatureExtractor.from_pretrained(model_name_or_path)
+# prepared_ds = test_dataset.dataset.with_transform(test_dataset.transform)
 
 # %%
