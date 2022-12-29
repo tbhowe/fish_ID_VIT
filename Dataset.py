@@ -32,7 +32,7 @@ class FishDataset:
     def __init__(self):
         '''class constructor'''
         self.dataset=load_dataset("imagefolder", data_dir="images/")
-        # self.labels=self.dataset['train'].features['labels']
+        self.fish_species=self.dataset['train'].features['label'].names
     
     def show_examples(self,
                         seed: int = 1234, 
@@ -45,7 +45,6 @@ class FishDataset:
         grid = Image.new('RGB', size=(examples_per_class * width, len(labels) * height))
         draw = ImageDraw.Draw(grid)
         # font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf", 24)
-
         for label_id, label in enumerate(labels):
             # Filter the dataset by a single label, shuffle it, and grab a few samples
             ds_slice = self.dataset['train'].filter(lambda ex: ex['label'] == label_id).shuffle(seed).select(range(examples_per_class))
@@ -58,6 +57,13 @@ class FishDataset:
                 draw.text(box, label, (255, 255, 255))
                 
         return(grid)
+    
+    def transform(example_batch):
+        # Take a list of PIL images and turn them to pixel values
+        inputs = feature_extractor([x for x in example_batch['image']], return_tensors='pt')
+        # include the labels
+        inputs['labels'] = example_batch['labels']
+        return inputs
 
 
     
