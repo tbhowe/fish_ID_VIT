@@ -19,7 +19,7 @@ class TrainingCongfig:
         self.dataset=FishDataset()
         self.model_path = 'google/vit-base-patch16-224-in21k'
         self.feature_extractor = ViTFeatureExtractor.from_pretrained(self.model_path)
-        self.prepared_ds = self.dataset.dataset.with_transform(self.dataset.transform)
+        self.prepared_ds = self.dataset.dataset.with_transform(self.transform)
         # self.prepared_ds.
         self.metric = load_metric("accuracy")
         self.labels = self.dataset.fish_species
@@ -61,9 +61,17 @@ class TrainingCongfig:
             'labels': torch.tensor([x['labels'] for x in batch])
         }
     
+    def transform(self,example_batch):
+        # Take a list of PIL images and turn them to pixel values
+        inputs = self.feature_extractor([x for x in example_batch['image']], return_tensors='pt')
+        # include the labels
+        inputs['labels'] = example_batch['label']
+        return inputs
+
     def compute_metrics(self,p):
         return self.metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
 
-test_trainer=TrainingCongfig()
-print(test_trainer.prepared_ds)
+if __name__ == '__main__':
+    test_trainer=TrainingCongfig()
+    print(test_trainer.prepared_ds)
 # %%

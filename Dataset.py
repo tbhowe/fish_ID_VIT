@@ -32,12 +32,21 @@ class FishDataset:
     def __init__(self):
         '''class constructor'''
         self.dataset=load_dataset("imagefolder", data_dir="images/" )['train']
+        # self.fish_species=self.get_species()
+        self.fish_species=self.dataset.features['label'].names
         self.dataset=self.dataset.train_test_split(test_size=0.3)
         self.splitter=self.dataset['test'].train_test_split(test_size=0.5)
         self.dataset['test']=self.splitter['test']
         self.dataset['validation']=self.splitter['train']
-        # self.fish_species=self.dataset['train'].features['label'].names
-    
+        
+
+    def get_species(self):
+        return self.listdir_nohidden("images/")
+
+    def get_one_example(self,idx):
+        example=self.dataset['train'][idx]
+        return example
+
     def show_examples(self,
                         seed: int = 1234, 
                         examples_per_class: int = 3, 
@@ -61,31 +70,32 @@ class FishDataset:
                 draw.text(box, label, (255, 255, 255))
                 
         return(grid)
-    
-    def transform(example_batch):
-        # Take a list of PIL images and turn them to pixel values
-        inputs = feature_extractor([x for x in example_batch['image']], return_tensors='pt')
-        # include the labels
-        inputs['labels'] = example_batch['labels']
-        return inputs
-    
-    
 
-
+    
+    
+    @staticmethod
+    def listdir_nohidden(path):
+        for f in os.listdir(path):
+            if not f.startswith('.'):
+                yield f
     
 
 
-# example=Fish('mackerel')
-# example.show()
-# example.__repr__()
+    
 
-test_dataset=FishDataset()
-print(test_dataset.dataset)
-# labels = test_dataset.dataset['train'].features['label'].names
-# print(labels)
-# test_dataset.show_examples()
-# model_name_or_path = 'google/vit-base-patch16-224-in21k'
-# feature_extractor = ViTFeatureExtractor.from_pretrained(model_name_or_path)
-# prepared_ds = test_dataset.dataset.with_transform(test_dataset.transform)
+
+
+if __name__ == '__main__':
+    test_dataset=FishDataset()
+    example=test_dataset.get_one_example(400)
+    print(example)
+    # print(test_dataset.dataset)
+    # print(test_dataset.fish_species)
+    # labels = test_dataset.dataset['train'].features['label'].names
+    # print(labels)
+    # test_dataset.show_examples()
+    # model_name_or_path = 'google/vit-base-patch16-224-in21k'
+    # feature_extractor = ViTFeatureExtractor.from_pretrained(model_name_or_path)
+    # prepared_ds = test_dataset.dataset.with_transform(test_dataset.transform)
 
 # %%
