@@ -11,6 +11,7 @@ from transformers import TrainingArguments
 from transformers import Trainer
 import torch
 import numpy as np
+from torch.utils.tensorboard import SummaryWriter
 
 #TODO docstrings
 
@@ -56,12 +57,14 @@ class TrainingCongfig:
 
     @staticmethod    
     def collate_function(batch):
+        '''collates examples into a batch'''
         return {
             'pixel_values': torch.stack([x['pixel_values'] for x in batch]),
             'labels': torch.tensor([x['labels'] for x in batch])
         }
     
     def transform(self,example_batch):
+        '''applies the feature extractor to a batch, returing pytorch tensors'''
         # Take a list of PIL images and turn them to pixel values
         inputs = self.feature_extractor([x for x in example_batch['image']], return_tensors='pt')
         # include the labels
@@ -69,9 +72,10 @@ class TrainingCongfig:
         return inputs
 
     def compute_metrics(self,p):
+        '''method to compute the metrics on the predictions'''
         return self.metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
 
-if __name__ == '__main__':
-    test_trainer=TrainingCongfig()
-    print(test_trainer.prepared_ds)
+# if __name__ == '__main__':
+#     test_trainer=TrainingCongfig()
+#     print(test_trainer.prepared_ds)
 # %%
