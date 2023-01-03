@@ -5,7 +5,7 @@ Can we train a visual transformer network to identify fish species?
 
 The file fish_scrape.py contains a class GetImages, containing methods which use Selenium with Chrome Webdriver to access the google images site, clear the GDPR cookies popup, and download a pre-determined number of images corresponding to a given keyword search.
 
-An instance of GetImages is passed a set of 10 keywords, each corresponding to a species of fish. The images for each keyword are downloaded to their own subfolder inside ~/images/ .
+An instance of GetImages is passed a set of 10 keywords, each corresponding to a species of fish. The images for each keyword are downloaded to their own subfolder inside /images/ .
 
 ### Milestone 2: create the dataset from the images folder.
 
