@@ -1,5 +1,5 @@
 # fish_ID_VIT
-Can we train a visual transformer network to identify fish species?
+Can we train a vision transformer network to identify fish species?
 
 ## Milestone 1:  Download example images from Google
 
